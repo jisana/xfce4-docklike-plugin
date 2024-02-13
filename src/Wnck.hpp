@@ -36,6 +36,7 @@ namespace Wnck
 
 	void setActiveWindow();
 	void setVisibleGroups();
+	bool isGenericWebApp(const char* windowName, const char* windowClassGroup);
 
 	extern WnckScreen* mWnckScreen;
 	extern Store::KeyStore<gulong, std::shared_ptr<GroupWindow>> mGroupWindows;

@@ -16,6 +16,15 @@ namespace Wnck
 	{
 		std::string getGroupNameSys(WnckWindow* wnckWindow)
 		{
+			
+			const char* windowName = wnck_window_get_name(wnckWindow);
+			const char* windowClassGroup = wnck_window_get_class_group_name(wnckWindow);
+
+			if (isGenericWebApp(windowName, windowClassGroup)) {
+				g_debug("Detected webApp");
+				return windowName;
+			}
+
 			// Wnck method const char *
 			const char* buf = wnck_window_get_class_group_name(wnckWindow);
 			if (buf != nullptr && buf[0] != '\0')
@@ -300,5 +309,28 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 			}
 			++it;
 		}
+	}
+
+	// Function to check if the window represents a generic webApp
+
+	// Example for a Webapp: 
+	// Window Name: Telegram, Window Class Group: Google-chrome
+	// Window Name: WhatsApp | Secure and Reliable Free Private Messaging and Calling, Window Class Group: Chromium
+
+
+	// Example for Normal Browser Window:
+	// Window Name: Untitled - Google Chrome, Window Class Group: Google-chrome
+	// Window Name: New Tab - Chromium, Window Class Group: Chromium
+
+	bool isGenericWebApp(const char* windowName, const char* windowClassGroup) {
+		
+		g_debug("Window Name: %s, Window Class Group: %s", windowName, windowClassGroup);
+		
+		return (windowName != nullptr && windowName[0] != '\0' &&
+				windowClassGroup != nullptr && windowClassGroup[0] != '\0' &&
+				(
+					(std::string(windowClassGroup) == "Google-chrome" && std::string(windowName).find("Google Chrome") == std::string::npos) ||
+					(std::string(windowClassGroup) == "Chromium" && std::string(windowName).find("Chromium") == std::string::npos)
+				));
 	}
 } // namespace Wnck
