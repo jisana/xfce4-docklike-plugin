@@ -20,7 +20,7 @@ sudo meson install -C build
 
 ```bash
 git clone https://gitlab.xfce.org/panel-plugins/xfce4-docklike-plugin.git && cd xfce4-docklike-plugin
-meson setup build
+meson setup build --prefix=/usr
 meson compile -C build
 sudo meson install -C build
 ```
