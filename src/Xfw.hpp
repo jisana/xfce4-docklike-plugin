@@ -48,6 +48,7 @@ namespace Xfw
 
 	void setActiveWindow();
 	void setVisibleGroups();
+	const gchar* getWebappClassId(const gchar* const* class_ids);
 
 	extern XfwScreen* mXfwScreen;
 	extern XfwWorkspaceGroup* mXfwWorkspaceGroup;

@@ -41,6 +41,12 @@ namespace Xfw
 		{
 			// Xfw method const char *
 			const gchar* const* class_ids = xfw_window_get_class_ids(xfwWindow);
+			const gchar* crx_id = getWebappClassId(class_ids); // look for class id starts with crx_ 
+			if (crx_id) {
+				g_debug("Detected WebApp via CRX ID: %s", crx_id);
+				return std::string(crx_id);
+			}
+
 			if (!xfce_str_is_empty(class_ids[0]))
 			{
 				// On X11, the class-id is generally the right app-id, but there is sometimes
@@ -84,6 +90,23 @@ namespace Xfw
 	} // namespace
 
 	// public:
+	const gchar* getWebappClassId(const gchar* const* class_ids)
+	{
+		if (!class_ids){
+			return nullptr;
+		}
+	
+		// class_ids[0], class_ids[1]
+		for (int i = 0; i < 2; ++i) { 
+			const gchar* class_id = class_ids[i];
+			if (class_id && g_str_has_prefix(class_id, "crx_")) {
+				g_debug("WebApp class_id found in class_ids[%d]: %s", i, class_id);
+				return class_id;
+			}
+		}
+	
+		return nullptr;
+	}
 
 	void init()
 	{
