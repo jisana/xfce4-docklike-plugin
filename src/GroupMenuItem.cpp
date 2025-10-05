@@ -39,22 +39,27 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	g_object_ref(mItem);
 
 	mGrid = GTK_GRID(gtk_grid_new());
-	gtk_grid_set_column_spacing(mGrid, 6);
-	gtk_widget_set_margin_start(GTK_WIDGET(mGrid), 6);
-	gtk_widget_set_margin_end(GTK_WIDGET(mGrid), 6);
-	gtk_widget_set_margin_top(GTK_WIDGET(mGrid), 2);
-	gtk_widget_set_margin_bottom(GTK_WIDGET(mGrid), 2);
+	gtk_grid_set_column_spacing(mGrid, 0);
+	gtk_widget_set_margin_start(GTK_WIDGET(mGrid), 0);
+	gtk_widget_set_margin_end(GTK_WIDGET(mGrid), 0);
+	gtk_widget_set_margin_top(GTK_WIDGET(mGrid), 0);
+	gtk_widget_set_margin_bottom(GTK_WIDGET(mGrid), 0);
 	gtk_widget_show(GTK_WIDGET(mGrid));
 	gtk_container_add(GTK_CONTAINER(mItem), GTK_WIDGET(mGrid));
 
 	mIcon = GTK_IMAGE(gtk_image_new());
 	gtk_widget_show(GTK_WIDGET(mIcon));
+	gtk_widget_set_halign(GTK_WIDGET(mIcon), GTK_ALIGN_START); 
+	gtk_widget_set_margin_start(GTK_WIDGET(mIcon), 6);
+	gtk_widget_set_margin_end(GTK_WIDGET(mIcon), 6);
 	gtk_grid_attach(mGrid, GTK_WIDGET(mIcon), 0, 0, 1, 1);
 
 	mLabel = GTK_LABEL(gtk_label_new(""));
 	gtk_label_set_xalign(mLabel, 0);
 	gtk_label_set_ellipsize(mLabel, PANGO_ELLIPSIZE_END);
-	gtk_label_set_width_chars(mLabel, 26);
+	gtk_label_set_width_chars(mLabel, 15);
+	gtk_widget_set_hexpand(GTK_WIDGET(mLabel), TRUE); 
+	gtk_widget_set_margin_start(GTK_WIDGET(mLabel), 0);
 	gtk_widget_show(GTK_WIDGET(mLabel));
 	gtk_grid_attach(mGrid, GTK_WIDGET(mLabel), 1, 0, 1, 1);
 
@@ -64,8 +69,9 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	gtk_grid_attach(mGrid, GTK_WIDGET(mCloseButton), 2, 0, 1, 1);
 
 	mPreview = GTK_IMAGE(gtk_image_new());
-	gtk_widget_set_margin_top(GTK_WIDGET(mPreview), 6);
-	gtk_widget_set_margin_bottom(GTK_WIDGET(mPreview), 6);
+	gtk_widget_set_margin_bottom(GTK_WIDGET(mPreview), 4);
+	gtk_widget_set_margin_start(GTK_WIDGET(mPreview), 6);
+	gtk_widget_set_margin_end(GTK_WIDGET(mPreview), 6);
 	gtk_grid_attach(mGrid, GTK_WIDGET(mPreview), 0, 1, 3, 1);
 	gtk_widget_set_visible(GTK_WIDGET(mPreview), Settings::showPreviews);
 
@@ -210,8 +216,17 @@ void GroupMenuItem::updatePreview()
 			{
 				gint scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
 				scale *= scale_factor;
-				thumbnail = gdk_pixbuf_scale_simple(pixbuf,
-					gdk_pixbuf_get_width(pixbuf) * scale, gdk_pixbuf_get_height(pixbuf) * scale, GDK_INTERP_BILINEAR);
+
+				//set max height for thumbnails 
+				int maxheight = 110;
+				int orig_width = gdk_pixbuf_get_width(pixbuf);
+				int orig_height = gdk_pixbuf_get_height(pixbuf);
+
+				int new_height = std::max(static_cast<int>(orig_height * scale), maxheight);
+				double height_ratio = static_cast<double>(new_height) / orig_height;
+				int new_width = static_cast<int>(orig_width * height_ratio);
+
+				thumbnail = gdk_pixbuf_scale_simple(pixbuf, new_width, new_height, GDK_INTERP_BILINEAR);
 				cairo_surface_t* surface = gdk_cairo_surface_create_from_pixbuf(thumbnail, scale_factor, nullptr);
 
 				gtk_image_set_from_surface(mPreview, surface);
