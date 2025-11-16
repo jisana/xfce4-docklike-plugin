@@ -7,6 +7,10 @@ Docklike Taskbar behaves similarly to many other desktop environments and operat
 For usage instructions, keyboard shortcuts, and screenshots, see:
 <https://docs.xfce.org/panel-plugins/xfce4-docklike-plugin/start>.
 
+## Prerequisits
+
+sudo apt install build-essential libgtk-3-dev libglib2.0-dev libxfce4panel-2.0-dev libxfce4ui-2-dev libxfce4windowing-0-dev gettext
+
 ## Build & Install
 
 ```bash
